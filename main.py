@@ -46,8 +46,8 @@ figure_rect = pygame.Rect(0, 0, SQUARE - 2, SQUARE - 2)
 figure=figures[0]
 
 #Функция проеврки выхода за границу W
-def check_borders():
-    if figure[i].x < 0 or figure[i].x > W - 1:
+def check_borders(cur):
+    if cur < 0 or cur > W - 1:
         return False
     return True
 
@@ -72,7 +72,7 @@ while True:
     figure_old = copy.deepcopy(figure)
     for i in range(4):
         figure[i].x += dx
-        if not check_borders():
+        if not check_borders(figure[i].x):
             figure = copy.deepcopy(figure_old)
             break
     #Отрисовка сетки поля
