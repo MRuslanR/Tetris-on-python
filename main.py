@@ -43,7 +43,7 @@ figures = [[pygame.Rect(x + W//2, y + 1, 1, 1) for x, y in fig_pos] for fig_pos 
 #Объект, отвечающий за отрисовку квадратика. -2 для того, чтобы квадратик не перерисовывал стенки
 figure_rect = pygame.Rect(0, 0, SQUARE - 2, SQUARE - 2)
 
-figure=figures[0]
+figure=figures[random.randint(0,7)]
 
 #Функция проеврки выхода за границу W
 def check_borders(cur):
