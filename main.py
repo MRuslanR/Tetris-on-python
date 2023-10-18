@@ -43,13 +43,17 @@ figures = [[pygame.Rect(x + W//2, y + 1, 1, 1) for x, y in fig_pos] for fig_pos 
 #Объект, отвечающий за отрисовку квадратика. -2 для того, чтобы квадратик не перерисовывал стенки
 figure_rect = pygame.Rect(0, 0, SQUARE - 2, SQUARE - 2)
 
-figure=figures[random.randint(0,7)]
+figure=figures[random.randint(0,6)]
 
 #Функция проеврки выхода за границу W
 def check_borders(cur):
     if cur < 0 or cur > W - 1:
         return False
     return True
+
+animation_speed=80
+animation_limit=2400
+animation_current=0
 
 while True:
     #Цвет игрового поля
@@ -67,6 +71,8 @@ while True:
                 dx-=1
             if event.key==pygame.K_RIGHT:
                 dx+=1
+            if event.key==pygame.K_DOWN:
+                animation_limit=160
 
     #Перемещение всех 4 квадратиков на dx c проверкой выхода за границу
     figure_old = copy.deepcopy(figure)
@@ -77,6 +83,14 @@ while True:
             break
     #Отрисовка сетки поля
     [pygame.draw.rect(screen, ("white"), i_rect, 1) for i_rect in grid]
+
+    #Сдвиг фигуры вниз на 1 единицу при превышении лимита анимации
+    animation_current+=animation_speed
+    if animation_current>animation_limit:
+        animation_current=0
+        for i in range(4):
+            figure[i].y+=1
+
 
     #Отрисовка фигуры путем рисования 4-х квадратиков
     for i in range(4):
