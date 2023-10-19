@@ -4,15 +4,12 @@ import copy
 
 pygame.init()
 
-#Разрешение игры
-RESOLUTION = 0
 #ФПС
 FPS=60
 #Количество квадратиков-полей (горизонталь, вертикаль)
 W, H = 10, 15
 #Размеры квадратиков-поля
 SQUARE=45
-
 
 #Название игры
 pygame.display.set_caption("Tetris from КНТ")
@@ -58,7 +55,6 @@ animation_current=0
 while True:
     #Цвет игрового поля
     screen.fill(pygame.Color('black'))
-
     dx = 0
 
     #Выход из программы при закрытии окна
@@ -91,14 +87,11 @@ while True:
         for i in range(4):
             figure[i].y+=1
 
-
     #Отрисовка фигуры путем рисования 4-х квадратиков
     for i in range(4):
         figure_rect.x = figure[i].x * SQUARE
         figure_rect.y = figure[i].y * SQUARE
         pygame.draw.rect(screen,('red'),figure_rect)
-
-
 
 
     #Обновление игрового экрана
