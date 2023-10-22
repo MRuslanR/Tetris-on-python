@@ -95,7 +95,6 @@ while True:
             figure[i].y+=1
             if not check_borders():
                 for i in range (4):
-                    print(figure_old[i],figure[i])
                     field[figure_old[i].y][figure_old[i].x] = pygame.Color('red') #mfidgjdjiejg
                 figure=copy.deepcopy(random.choice(figures))
                 animation_limit = 2400
@@ -130,13 +129,15 @@ while True:
         pygame.draw.rect(screen,('red'),figure_rect)
 
     #Проверка заполненности линии
-
-    for i in range (H-1,0,-1):
-        if all(field[i][j]!=0 for j in range (W)):
-            for j in range(i,0,-1):
-                field[j]=copy.deepcopy(field[j-1])
-
-
+    line, lines = H - 1, 0
+    for row in range(H - 1, -1, -1):
+        count = 0
+        for i in range(W):
+            if field[row][i]:
+                count += 1
+            field[line][i] = field[row][i]
+        if count < W:
+            line -= 1
 
  #IODIWHDHWIDHIWHD
     for y, raw in enumerate(field):
@@ -145,6 +146,9 @@ while True:
                 figure_rect.x, figure_rect.y = x * SQUARE, y * SQUARE
                 pygame.draw.rect(screen, col, figure_rect)
 
+    #Концовка игры
+    if any(field[0][j]!=0 for j in range (W)):
+        exit()
 
     #Обновление игрового экрана
     pygame.display.flip()
