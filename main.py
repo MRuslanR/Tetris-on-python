@@ -45,21 +45,20 @@ figure=copy.deepcopy(random.choice(figures))
 #Функция проеврки выхода за границу W
 
 #cur = figure[i]
-def check_bordersX(cur):
-    if cur.x < 0 or cur.x > W - 1:
+def check_borders():
+    if figure[i].x < 0 or figure[i].x > W - 1:
         return False
-    return True
-def check_bordersY(cur):
-    if cur.y > H - 1 or field[cur.y][cur.x]!=0:
+    elif figure[i].y > H - 1 or field[figure[i].y][figure[i].x]:
         return False
     return True
 
-animation_speed=160
+animation_speed=80
 animation_limit=2400
 animation_current=0
 #Игровое поле, в котором будут отмечаться уже упавшие фигуры
-field = [[0 for i in range(W)] for i in range(H)]
+field = [[0 for i in range(W)] for j in range(H)]
 
+figure = figures[1]
 
 while True:
     #Цвет игрового поля
@@ -82,15 +81,10 @@ while True:
             if event.key==pygame.K_UP:
                 flag_rotate = True
 
-    #Перемещение всех 4 квадратиков на dx c проверкой выхода за границу
-    figure_old = copy.deepcopy(figure)
-    for i in range(4):
-        figure[i].x += dx
-        if not check_bordersX(figure[i]):
-            figure = copy.deepcopy(figure_old)
-            break
+
     #Отрисовка сетки поля
     [pygame.draw.rect(screen, ("white"), i_rect, 1) for i_rect in grid]
+
 
     #Сдвиг фигуры вниз на 1 единицу при превышении лимита анимации
     animation_current+=animation_speed
@@ -99,15 +93,24 @@ while True:
         figure_old=copy.deepcopy(figure)
         for i in range(4):
             figure[i].y+=1
-            if not check_bordersY(figure[i]):
-                for j in range (4):
-                    field[figure_old[j].y][figure_old[j].x]= pygame.Color("red")#mfidgjdjiejg
-                animation_limit=2400
+            if not check_borders():
+                for i in range (4):
+                    field[figure_old[i].y][figure_old[i].x] = pygame.Color('red') #mfidgjdjiejg
                 figure=copy.deepcopy(random.choice(figures))
+                animation_limit = 2400
                 break
 
+    #Перемещение всех 4 квадратиков на dx c проверкой выхода за границу
+    figure_old = copy.deepcopy(figure)
+    for i in range(4):
+        figure[i].x += dx
+        if not check_borders():
+            figure = copy.deepcopy(figure_old)
+            break
+
+
     # переворот фигуры
-    if flag_rotate == True:
+    if flag_rotate == True and figure!=figures[1]:
         center = figure[0]
         figure_old = copy.deepcopy(figure)
         for i in range(4):
@@ -115,7 +118,7 @@ while True:
             y = figure[i].x - center.x
             figure[i].x = center.x - x
             figure[i].y = center.y + y
-            if not check_bordersX(figure[i]) and not check_bordersY(figure[i]):
+            if not check_borders():
                 figure = copy.deepcopy(figure_old)
                 break
 
@@ -124,6 +127,7 @@ while True:
         figure_rect.x = figure[i].x * SQUARE
         figure_rect.y = figure[i].y * SQUARE
         pygame.draw.rect(screen,('red'),figure_rect)
+
 
  #IODIWHDHWIDHIWHD
     for y, raw in enumerate(field):
