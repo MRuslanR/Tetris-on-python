@@ -60,11 +60,12 @@ animation_current=0
 #Игровое поле, в котором будут отмечаться уже упавшие фигуры
 field = [[0 for i in range(W)] for i in range(H)]
 
+
 while True:
     #Цвет игрового поля
     screen.fill(pygame.Color('black'))
     dx = 0
-
+    flag_rotate = False
 
     #Выход из программы при закрытии окна
     for event in pygame.event.get():
@@ -78,8 +79,8 @@ while True:
                 dx+=1
             if event.key==pygame.K_DOWN:
                 animation_limit=160
-
-
+            if event.key==pygame.K_UP:
+                flag_rotate = True
 
     #Перемещение всех 4 квадратиков на dx c проверкой выхода за границу
     figure_old = copy.deepcopy(figure)
@@ -100,14 +101,23 @@ while True:
             figure[i].y+=1
             if not check_bordersY(figure[i]):
                 for j in range (4):
-                    field[figure_old[j].y][figure_old[j].x]=pygame.Color("White") #mfidgjdjiejg
+                    field[figure_old[j].y][figure_old[j].x]= pygame.Color("red")#mfidgjdjiejg
                 animation_limit=2400
                 figure=copy.deepcopy(random.choice(figures))
                 break
 
-
-
-
+    # переворот фигуры
+    if flag_rotate == True:
+        center = figure[0]
+        figure_old = copy.deepcopy(figure)
+        for i in range(4):
+            x = figure[i].y - center.y
+            y = figure[i].x - center.x
+            figure[i].x = center.x - x
+            figure[i].y = center.y + y
+            if not check_bordersX(figure[i]) and not check_bordersY(figure[i]):
+                figure = copy.deepcopy(figure_old)
+                break
 
     #Отрисовка фигуры путем рисования 4-х квадратиков
     for i in range(4):
