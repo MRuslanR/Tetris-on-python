@@ -40,22 +40,31 @@ figures = [[pygame.Rect(x + W//2, y + 1, 1, 1) for x, y in fig_pos] for fig_pos 
 #Объект, отвечающий за отрисовку квадратика. -2 для того, чтобы квадратик не перерисовывал стенки
 figure_rect = pygame.Rect(0, 0, SQUARE - 2, SQUARE - 2)
 
-figure=figures[random.randint(0,6)]
+figure=copy.deepcopy(random.choice(figures))
 
 #Функция проеврки выхода за границу W
-def check_borders(cur):
-    if cur < 0 or cur > W - 1:
+
+#cur = figure[i]
+def check_bordersX(cur):
+    if cur.x < 0 or cur.x > W - 1:
+        return False
+    return True
+def check_bordersY(cur):
+    if cur.y > H - 1 or field[cur.y][cur.x]!=0:
         return False
     return True
 
-animation_speed=80
+animation_speed=160
 animation_limit=2400
 animation_current=0
+#Игровое поле, в котором будут отмечаться уже упавшие фигуры
+field = [[0 for i in range(W)] for i in range(H)]
 
 while True:
     #Цвет игрового поля
     screen.fill(pygame.Color('black'))
     dx = 0
+
 
     #Выход из программы при закрытии окна
     for event in pygame.event.get():
@@ -70,11 +79,13 @@ while True:
             if event.key==pygame.K_DOWN:
                 animation_limit=160
 
+
+
     #Перемещение всех 4 квадратиков на dx c проверкой выхода за границу
     figure_old = copy.deepcopy(figure)
     for i in range(4):
         figure[i].x += dx
-        if not check_borders(figure[i].x):
+        if not check_bordersX(figure[i]):
             figure = copy.deepcopy(figure_old)
             break
     #Отрисовка сетки поля
@@ -84,8 +95,19 @@ while True:
     animation_current+=animation_speed
     if animation_current>animation_limit:
         animation_current=0
+        figure_old=copy.deepcopy(figure)
         for i in range(4):
             figure[i].y+=1
+            if not check_bordersY(figure[i]):
+                for j in range (4):
+                    field[figure_old[j].y][figure_old[j].x]=pygame.Color("White") #mfidgjdjiejg
+                animation_limit=2400
+                figure=copy.deepcopy(random.choice(figures))
+                break
+
+
+
+
 
     #Отрисовка фигуры путем рисования 4-х квадратиков
     for i in range(4):
@@ -93,7 +115,15 @@ while True:
         figure_rect.y = figure[i].y * SQUARE
         pygame.draw.rect(screen,('red'),figure_rect)
 
+ #IODIWHDHWIDHIWHD
+    for y, raw in enumerate(field):
+        for x, col in enumerate(raw):
+            if col:
+                figure_rect.x, figure_rect.y = x * SQUARE, y * SQUARE
+                pygame.draw.rect(screen, col, figure_rect)
+
 
     #Обновление игрового экрана
     pygame.display.flip()
     clock.tick(FPS)
+
