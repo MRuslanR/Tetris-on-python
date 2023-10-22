@@ -1,3 +1,4 @@
+import time
 import pygame
 import random
 import copy
@@ -42,9 +43,7 @@ figure_rect = pygame.Rect(0, 0, SQUARE - 2, SQUARE - 2)
 
 figure=copy.deepcopy(random.choice(figures))
 
-#Функция проеврки выхода за границу W
-
-#cur = figure[i]
+#Функция проеврки выхода за границы
 def check_borders():
     if figure[i].x < 0 or figure[i].x > W - 1:
         return False
@@ -52,13 +51,14 @@ def check_borders():
         return False
     return True
 
+#Игровой баланс
 animation_speed=40
 animation_limit=2400
 animation_current=0
+
 #Игровое поле, в котором будут отмечаться уже упавшие фигуры
 field = [[0 for i in range(W)] for j in range(H+1)]
 
-figure = figures[1]
 
 while True:
     #Цвет игрового поля
@@ -128,26 +128,26 @@ while True:
         figure_rect.y = figure[i].y * SQUARE
         pygame.draw.rect(screen,('red'),figure_rect)
 
-    #Проверка заполненности линии
-    line, lines = H - 1, 0
-    for row in range(H - 1, -1, -1):
-        count = 0
-        for i in range(W):
-            if field[row][i]:
-                count += 1
-            field[line][i] = field[row][i]
-        if count < W:
-            line -= 1
+    #Проверка заполненности линии и сдвиг линий при полностью заполненной линии
+    line = H - 1
+    for i in range(H - 1, -1, -1):
+        flag = True
+        if all(field[i][j]!=0 for j in range (W)): flag = False
+        field[line] = field[i]
+        if flag: line -= 1
 
- #IODIWHDHWIDHIWHD
-    for y, raw in enumerate(field):
-        for x, col in enumerate(raw):
-            if col:
-                figure_rect.x, figure_rect.y = x * SQUARE, y * SQUARE
-                pygame.draw.rect(screen, col, figure_rect)
+
+    #Алгоритм отображения занятых клеток
+    for y in range(H):
+        for x in range(W):
+            if field[y][x]:
+                pygame.draw.rect(screen, 'red', (x*SQUARE,y*SQUARE,SQUARE-2,SQUARE-2))
+
 
     #Концовка игры
     if any(field[0][j]!=0 for j in range (W)):
+        time.sleep(5)
+        print("Конец игры")
         exit()
 
     #Обновление игрового экрана
