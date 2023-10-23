@@ -23,7 +23,7 @@ speed_if_K_DOWN=160
 score=0
 plus_score=100
 delta_for_up_score=10
-plus_animation_speed=3
+plus_animation_speed=2
 
 #Название игры
 pygame.display.set_caption("Tetris from КНТ")
@@ -78,6 +78,22 @@ def get_color():
     return (random.randint(100,255),random.randint(100,255),random.randint(100,255))
 
 
+#Функция создания файла для best_score
+def get_record():
+    try:
+        with open('record') as f:
+            return f.readline()
+    except FileNotFoundError:
+        with open('record', 'w') as f:
+            f.write('0')
+
+#Функция переопределения рекорда
+def set_record(record, score):
+    best_record = max(int(record), score)
+    with open('record', 'w') as f:
+        f.write(str(best_record))
+
+
 #Игровое поле, в котором будут отмечаться уже упавшие фигуры
 field = [[0 for i in range(W)] for j in range(H+1)]
 
@@ -92,6 +108,8 @@ next_color=get_color()
 HEAD_text=head_font.render('Tetris from KHT',True,'gold')
 SCORE_text=score_font.render('SCORE',True,'orange')
 CUR_SCORE_text=score_font.render('0',True,'orange')
+BEST_RECORD_text=score_font.render('BEST',True,'orange')
+VALUE_BEST_RECORD_text=score_font.render(str(get_record()),True,'orange')
 
 while True:
     #Задний фон
@@ -99,18 +117,25 @@ while True:
     #Заголовок
     back_screen.blit(HEAD_text,(RESOLUTION[0]//5,0))
     #Score
-    back_screen.blit(SCORE_text,(RESOLUTION[0]//2+W*SQUARE//1.6,RESOLUTION[1]//1.8))
+    back_screen.blit(SCORE_text,(RESOLUTION[0]//2+W*SQUARE//1.6,RESOLUTION[1] // 1.6))
     #Cur score
-    back_screen.blit(CUR_SCORE_text, (RESOLUTION[0] // 2 + W * SQUARE // 1.4, RESOLUTION[1] // 1.5))
+    back_screen.blit(CUR_SCORE_text, (RESOLUTION[0] // 2 + W * SQUARE // 1.4, RESOLUTION[1] // 1.4))
     #Основной экран игры
     back_screen.blit(screen,( RESOLUTION[0]//2-W*SQUARE//2 , 0.15*H*SQUARE))
     #Иконка HSE
     back_screen.blit(HSE,(RESOLUTION[0]-100,0))
+    #Надпись BEST
+    back_screen.blit(BEST_RECORD_text,(RESOLUTION[0]//1.95-W*SQUARE,RESOLUTION[1]//1.8))
+    #Надпись Score под Best
+    back_screen.blit(SCORE_text, (RESOLUTION[0] // 2 - W * SQUARE, RESOLUTION[1] // 1.6))
+    #Best record value
+    back_screen.blit(VALUE_BEST_RECORD_text,((RESOLUTION[0] // 1.9 - W * SQUARE, RESOLUTION[1] // 1.4)))
     #Цвет игрового поля
     screen.fill(pygame.Color('black'))
 
     dx = 0
     flag_rotate = False
+    record=get_record()
 
     #Выход из программы при закрытии окна
     for event in pygame.event.get():
@@ -182,6 +207,7 @@ while True:
         figure_rect.y = figure[i].y * SQUARE
         pygame.draw.rect(screen,color,figure_rect)
 
+
     #Проверка заполненности линии и сдвиг линий при полностью заполненной линии
     line = H - 1
     for i in range(H - 1, -1, -1):
@@ -192,6 +218,7 @@ while True:
             plus_score+=delta_for_up_score
             CUR_SCORE_text=score_font.render(str(score),True,'orange')
             animation_speed+=plus_animation_speed
+
         field[line] = copy.deepcopy(field[i])
         if flag: line -= 1
 
@@ -204,6 +231,7 @@ while True:
 
     #Концовка игры
     if any(field[0][j]!=0 for j in range (W)):
+        set_record(record,score)
         time.sleep(5)
         print("Конец игры")
         exit()
