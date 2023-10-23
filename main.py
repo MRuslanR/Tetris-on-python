@@ -1,4 +1,3 @@
-import time
 import pygame
 import random
 import copy
@@ -23,7 +22,7 @@ speed_if_K_DOWN=160
 score=0
 plus_score=100
 delta_for_up_score=10
-plus_animation_speed=2
+plus_animation_speed=100
 
 #Название игры
 pygame.display.set_caption("Tetris from КНТ")
@@ -41,8 +40,8 @@ icon = pygame.image.load('images/icon1.jpg')
 HSE = pygame.image.load('images/hss.png').convert()
 background = pygame.image.load('images/back.jfif')
 #Загрузка шрифтов
-score_font=pygame.font.Font('font\Metal_Mania/MetalMania-Regular.ttf',50)
-head_font=pygame.font.Font('font\Playpen_Sans/PlaypenSans-VariableFont_wght.ttf',70)
+score_font=pygame.font.Font('font/Metal_Mania/MetalMania-Regular.ttf',50)
+head_font=pygame.font.Font('font/Playpen_Sans/PlaypenSans-VariableFont_wght.ttf',70)
 
 #Создание иконки для приложения
 pygame.display.set_icon(icon)
@@ -232,10 +231,13 @@ while True:
     #Концовка игры
     if any(field[0][j]!=0 for j in range (W)):
         set_record(record,score)
-        time.sleep(5)
-        print("Конец игры")
-        exit()
-
+        animation_speed = 40
+        animation_limit = main_animation_limit
+        animation_current = 0
+        score = 0
+        plus_score = 100
+        field = [[0 for i in range(W)] for j in range(H + 1)]
+        CUR_SCORE_text = score_font.render('0', True, 'orange')
     #Обновление игрового экрана
     pygame.display.flip()
     clock.tick(FPS)
