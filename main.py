@@ -1,9 +1,7 @@
-import sys
-
 import pygame
 import random
 import copy
-#import sys
+import sys
 
 pygame.init()
 
@@ -40,7 +38,7 @@ screen=pygame.Surface((W*SQUARE,H*SQUARE))
 
 #Загрузка картинок
 icon = pygame.image.load('images/icon1.jpg')
-HSE = pygame.image.load('images/hss.png').convert()
+HSE = pygame.image.load('images/hss.png')
 background = pygame.image.load('images/back.jfif')
 #Загрузка шрифтов
 score_font=pygame.font.Font('font/Metal_Mania/MetalMania-Regular.ttf',50)
@@ -107,7 +105,7 @@ next_figure=copy.deepcopy(figures[random.randint(0,6)])
 next_color=get_color()
 
 #Созданеи заготовок для текста
-HEAD_text=head_font.render('Tetris from KHT',True,'gold')
+HEAD_text=head_font.render('Tetris from KHT',True,(248, 252, 15))
 SCORE_text=score_font.render('SCORE',True,'orange')
 CUR_SCORE_text=score_font.render('0',True,'orange')
 BEST_RECORD_text=score_font.render('BEST',True,'orange')
@@ -118,7 +116,7 @@ while True:
     #Задний фон
     back_screen.blit(background,(0,0))
     #Заголовок
-    back_screen.blit(HEAD_text,(RESOLUTION[0]//5,0))
+    back_screen.blit(HEAD_text,(RESOLUTION[0]//5,-10))
     #Score
     back_screen.blit(SCORE_text,(RESOLUTION[0]//2+W*SQUARE//1.6,RESOLUTION[1] // 1.6))
     #Cur score
