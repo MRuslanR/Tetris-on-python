@@ -1,3 +1,5 @@
+import time
+
 import pygame
 import random
 import copy
@@ -22,7 +24,7 @@ speed_if_K_DOWN=160
 score=0
 plus_score=100
 delta_for_up_score=10
-plus_animation_speed=100
+plus_animation_speed=2
 
 #Название игры
 pygame.display.set_caption("Tetris from КНТ")
@@ -230,14 +232,60 @@ while True:
 
     #Концовка игры
     if any(field[0][j]!=0 for j in range (W)):
-        set_record(record,score)
+        #Финальная сцена
+        field = [[0 for i in range(W)] for j in range(H + 1)]
+        for y in range(H//2+1):
+            for x in range(W):
+                pygame.draw.rect(screen, get_color(), (x * SQUARE, y * SQUARE, SQUARE - 2, SQUARE - 2))
+                pygame.draw.rect(screen, get_color(), (x * SQUARE, (H-y-1) * SQUARE, SQUARE - 2, SQUARE - 2))
+                back_screen.blit(screen,( RESOLUTION[0]//2-W*SQUARE//2 , 0.15*H*SQUARE))
+                clock.tick(20)
+                pygame.display.flip()
+        for y in range(H // 2 + 1):
+            for x in range(W):
+                pygame.draw.rect(screen, 'black', (x * SQUARE, y * SQUARE, SQUARE - 2, SQUARE - 2))
+                pygame.draw.rect(screen, 'black',(x * SQUARE, (H - y - 1) * SQUARE, SQUARE - 2, SQUARE - 2))
+                back_screen.blit(screen, (RESOLUTION[0] // 2 - W * SQUARE // 2, 0.15 * H * SQUARE))
+                clock.tick(20)
+                pygame.display.flip()
+        field = [[0 for i in range(W)] for j in range(H + 1)]
+        #Рисование сердечка
+        if score > int(record):
+            field[8][4] = 1
+            field[8][5] = 1
+            field[7][3] = 1
+            field[7][6] = 1
+            field[6][2] = 1
+            field[6][7] = 1
+            field[5][1] = 1
+            field[5][8] = 1
+            field[4][2] = 1
+            field[4][7] = 1
+            field[3][3] = 1
+            field[3][6] = 1
+            field[4][4] = 1
+            field[4][5] = 1
+            for y in range(H):
+                for x in range(W):
+                    if field[y][x]:
+                        pygame.draw.rect(screen, 'red', (x * SQUARE, y * SQUARE, SQUARE - 2, SQUARE - 2))
+            back_screen.blit(screen, (RESOLUTION[0] // 2 - W * SQUARE // 2, 0.15 * H * SQUARE))
+            pygame.display.flip()
+            clock.tick(1)
+            clock.tick(1)
+            clock.tick(1)
+            clock.tick(1)
+            VALUE_BEST_RECORD_text = score_font.render(str(score), True, 'orange')
+            set_record(record, score)
+        # Обновление экрана игры и показателей при проигрыше
+        field = [[0 for i in range(W)] for j in range(H + 1)]
         animation_speed = 40
         animation_limit = main_animation_limit
         animation_current = 0
         score = 0
         plus_score = 100
-        field = [[0 for i in range(W)] for j in range(H + 1)]
         CUR_SCORE_text = score_font.render('0', True, 'orange')
+
     #Обновление игрового экрана
     pygame.display.flip()
     clock.tick(FPS)
