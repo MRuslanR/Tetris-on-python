@@ -96,7 +96,7 @@ while True:
             if not check_borders():
                 for i in range (4):
                     field[figure_old[i].y][figure_old[i].x] = pygame.Color('red') #mfidgjdjiejg
-                figure=copy.deepcopy(random.choice(figures))
+                figure=copy.deepcopy(figures[random.randint(0,6)])
                 animation_limit = 2400
                 break
 
@@ -133,7 +133,7 @@ while True:
     for i in range(H - 1, -1, -1):
         flag = True
         if all(field[i][j]!=0 for j in range (W)): flag = False
-        field[line] = field[i]
+        field[line] = copy.deepcopy(field[i])
         if flag: line -= 1
 
 
