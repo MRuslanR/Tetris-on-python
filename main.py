@@ -116,7 +116,7 @@ while True:
     #Задний фон
     back_screen.blit(background,(0,0))
     #Заголовок
-    back_screen.blit(HEAD_text,(RESOLUTION[0]//5,-10))
+    back_screen.blit(HEAD_text,(RESOLUTION[0]//5.5,-10))
     #Score
     back_screen.blit(SCORE_text,(RESOLUTION[0]//2+W*SQUARE//1.6,RESOLUTION[1] // 1.6))
     #Cur score
@@ -235,20 +235,19 @@ while True:
     #Концовка игры
     if any(field[0][j]!=0 for j in range (W)):
         #Финальная сцена
-        field = [[0 for i in range(W)] for j in range(H + 1)]
         for y in range(H//2+1):
             for x in range(W):
                 pygame.draw.rect(screen, get_color(), (x * SQUARE, y * SQUARE, SQUARE - 2, SQUARE - 2))
                 pygame.draw.rect(screen, get_color(), (x * SQUARE, (H-y-1) * SQUARE, SQUARE - 2, SQUARE - 2))
                 back_screen.blit(screen,( RESOLUTION[0]//2-W*SQUARE//2 , 0.15*H*SQUARE))
-                clock.tick(20)
+                clock.tick(30)
                 pygame.display.flip()
         for y in range(H // 2 + 1):
             for x in range(W):
                 pygame.draw.rect(screen, 'black', (x * SQUARE, y * SQUARE, SQUARE - 2, SQUARE - 2))
                 pygame.draw.rect(screen, 'black',(x * SQUARE, (H - y - 1) * SQUARE, SQUARE - 2, SQUARE - 2))
                 back_screen.blit(screen, (RESOLUTION[0] // 2 - W * SQUARE // 2, 0.15 * H * SQUARE))
-                clock.tick(20)
+                clock.tick(30)
                 pygame.display.flip()
         field = [[0 for i in range(W)] for j in range(H + 1)]
         #Рисование сердечка
