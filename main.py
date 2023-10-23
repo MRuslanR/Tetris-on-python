@@ -57,7 +57,6 @@ figures = [[pygame.Rect(x + W//2, y + 1, 1, 1) for x, y in fig_pos] for fig_pos 
 #Объект, отвечающий за отрисовку квадратика. -2 для того, чтобы квадратик не перерисовывал стенки
 figure_rect = pygame.Rect(0, 0, SQUARE - 2, SQUARE - 2)
 
-figure=copy.deepcopy(random.choice(figures))
 
 #Функция проеврки выхода за границы
 def check_borders():
@@ -67,9 +66,20 @@ def check_borders():
         return False
     return True
 
+#Формирование фигур в рандомным цветом (начинаем от 100, таким образом цвета будут ярче)
+def get_color():
+    return (random.randint(100,255),random.randint(100,255),random.randint(100,255))
+
 
 #Игровое поле, в котором будут отмечаться уже упавшие фигуры
 field = [[0 for i in range(W)] for j in range(H+1)]
+
+
+#Создание первоначальной фигуры
+figure=copy.deepcopy(figures[random.randint(0,6)])
+color=get_color()
+next_figure=copy.deepcopy(figures[random.randint(0,6)])
+next_color=get_color()
 
 
 while True:
@@ -102,6 +112,11 @@ while True:
     #Отрисовка сетки поля
     [pygame.draw.rect(screen, ("white"), i_rect, 1) for i_rect in grid]
 
+    #Отрисовка следующей фигуры
+    for i in range(4):
+        figure_rect.x=450+SQUARE*next_figure[i].x
+        figure_rect.y=200+SQUARE*next_figure[i].y
+        pygame.draw.rect(back_screen,next_color,figure_rect)
 
     #Сдвиг фигуры вниз на 1 единицу при превышении лимита анимации
     animation_current+=animation_speed
@@ -112,8 +127,11 @@ while True:
             figure[i].y+=1
             if not check_borders():
                 for i in range (4):
-                    field[figure_old[i].y][figure_old[i].x] = pygame.Color('red') #mfidgjdjiejg
-                figure=copy.deepcopy(figures[random.randint(0,6)])
+                    field[figure_old[i].y][figure_old[i].x] = color
+                color = next_color
+                figure = next_figure
+                next_figure=copy.deepcopy(figures[random.randint(0,6)])
+                next_color=get_color()
                 animation_limit = main_animation_limit
                 break
 
@@ -143,7 +161,7 @@ while True:
     for i in range(4):
         figure_rect.x = figure[i].x * SQUARE
         figure_rect.y = figure[i].y * SQUARE
-        pygame.draw.rect(screen,('red'),figure_rect)
+        pygame.draw.rect(screen,color,figure_rect)
 
     #Проверка заполненности линии и сдвиг линий при полностью заполненной линии
     line = H - 1
@@ -158,8 +176,7 @@ while True:
     for y in range(H):
         for x in range(W):
             if field[y][x]:
-                pygame.draw.rect(screen, 'red', (x*SQUARE,y*SQUARE,SQUARE-2,SQUARE-2))
-
+                pygame.draw.rect(screen, field[y][x], (x*SQUARE,y*SQUARE,SQUARE-2,SQUARE-2))
 
     #Концовка игры
     if any(field[0][j]!=0 for j in range (W)):
