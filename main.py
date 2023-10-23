@@ -1,6 +1,9 @@
+import sys
+
 import pygame
 import random
 import copy
+#import sys
 
 pygame.init()
 
@@ -142,7 +145,7 @@ while True:
     #Выход из программы при закрытии окна
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
-            exit()
+            sys.exit()
         #Отслеживание перемещения фигуры влево вправо
         if event.type==pygame.KEYDOWN:
             if event.key==pygame.K_LEFT:
