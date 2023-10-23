@@ -1,5 +1,3 @@
-import time
-
 import pygame
 import random
 import copy
@@ -111,6 +109,7 @@ SCORE_text=score_font.render('SCORE',True,'orange')
 CUR_SCORE_text=score_font.render('0',True,'orange')
 BEST_RECORD_text=score_font.render('BEST',True,'orange')
 VALUE_BEST_RECORD_text=score_font.render(str(get_record()),True,'orange')
+NEXT_FIGURE_text=score_font.render('NEXT',True,'blue')
 
 while True:
     #Задний фон
@@ -124,13 +123,15 @@ while True:
     #Основной экран игры
     back_screen.blit(screen,( RESOLUTION[0]//2-W*SQUARE//2 , 0.15*H*SQUARE))
     #Иконка HSE
-    back_screen.blit(HSE,(RESOLUTION[0]-100,0))
+    back_screen.blit(HSE,(0,0))
     #Надпись BEST
     back_screen.blit(BEST_RECORD_text,(RESOLUTION[0]//1.95-W*SQUARE,RESOLUTION[1]//1.8))
     #Надпись Score под Best
     back_screen.blit(SCORE_text, (RESOLUTION[0] // 2 - W * SQUARE, RESOLUTION[1] // 1.6))
     #Best record value
-    back_screen.blit(VALUE_BEST_RECORD_text,((RESOLUTION[0] // 1.9 - W * SQUARE, RESOLUTION[1] // 1.4)))
+    back_screen.blit(VALUE_BEST_RECORD_text,(RESOLUTION[0] // 1.9 - W * SQUARE, RESOLUTION[1] // 1.4))
+    #Next
+    back_screen.blit(NEXT_FIGURE_text,(RESOLUTION[0]//2+W*SQUARE//1.6,RESOLUTION[1]//4))
     #Цвет игрового поля
     screen.fill(pygame.Color('black'))
 
