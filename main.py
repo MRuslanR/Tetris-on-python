@@ -5,6 +5,8 @@ import copy
 
 pygame.init()
 
+#Разрешение задней поферхности
+RESOLUTION = 900,720
 #ФПС
 FPS=120
 #Количество квадратиков-полей (горизонталь, вертикаль)
@@ -12,16 +14,30 @@ W, H = 10, 15
 #Размеры квадратиков-поля
 SQUARE=45
 
+#Игровой баланс
+animation_speed=40
+main_animation_limit=2400
+animation_limit=main_animation_limit
+animation_current=0
+speed_if_K_DOWN=160
+
+
 #Название игры
 pygame.display.set_caption("Tetris from КНТ")
 #Создание игрового таймера
 clock = pygame.time.Clock()
 
+#Создаем задний экран игры
+back_screen=pygame.display.set_mode(RESOLUTION)
+
 #Формируем экран из квадратиков
-screen=pygame.display.set_mode((W*SQUARE,H*SQUARE))
+screen=pygame.Surface((W*SQUARE,H*SQUARE))
+
+#Загрузка картинок
+icon = pygame.image.load('images/icon1.jpg')
+HSE = pygame.image.load('images/hss.png').convert()
 
 #Создание иконки для приложения
-icon = pygame.image.load('images/icon1.jpg')
 pygame.display.set_icon(icon)
 
 #Создание сетки поля, rect() отвечает за координаты квадрата. 1-коорд по х 2-коорд по у 3-размер первой стороны 4-размер второй стороны
@@ -51,18 +67,19 @@ def check_borders():
         return False
     return True
 
-#Игровой баланс
-animation_speed=40
-animation_limit=2400
-animation_current=0
 
 #Игровое поле, в котором будут отмечаться уже упавшие фигуры
 field = [[0 for i in range(W)] for j in range(H+1)]
 
 
 while True:
+    #Задний фон
+    back_screen.fill(pygame.Color('black'))
+    back_screen.blit(screen,(20,20))
+    back_screen.blit(HSE,(800,0))
     #Цвет игрового поля
     screen.fill(pygame.Color('black'))
+
     dx = 0
     flag_rotate = False
 
@@ -77,7 +94,7 @@ while True:
             if event.key==pygame.K_RIGHT:
                 dx+=1
             if event.key==pygame.K_DOWN:
-                animation_limit=160
+                animation_limit=speed_if_K_DOWN
             if event.key==pygame.K_UP:
                 flag_rotate = True
 
@@ -97,7 +114,7 @@ while True:
                 for i in range (4):
                     field[figure_old[i].y][figure_old[i].x] = pygame.Color('red') #mfidgjdjiejg
                 figure=copy.deepcopy(figures[random.randint(0,6)])
-                animation_limit = 2400
+                animation_limit = main_animation_limit
                 break
 
     #Перемещение всех 4 квадратиков на dx c проверкой выхода за границу
