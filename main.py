@@ -6,13 +6,13 @@ import copy
 pygame.init()
 
 #Разрешение задней поферхности
-RESOLUTION = 900,720
+RESOLUTION = 850,700
 #ФПС
 FPS=120
 #Количество квадратиков-полей (горизонталь, вертикаль)
 W, H = 10, 15
 #Размеры квадратиков-поля
-SQUARE=45
+SQUARE=40
 
 #Игровой баланс
 animation_speed=40
@@ -20,7 +20,10 @@ main_animation_limit=2400
 animation_limit=main_animation_limit
 animation_current=0
 speed_if_K_DOWN=160
-
+score=0
+plus_score=100
+delta_for_up_score=10
+plus_animation_speed=3
 
 #Название игры
 pygame.display.set_caption("Tetris from КНТ")
@@ -36,6 +39,10 @@ screen=pygame.Surface((W*SQUARE,H*SQUARE))
 #Загрузка картинок
 icon = pygame.image.load('images/icon1.jpg')
 HSE = pygame.image.load('images/hss.png').convert()
+background = pygame.image.load('images/back.jfif')
+#Загрузка шрифтов
+score_font=pygame.font.Font('font\Metal_Mania/MetalMania-Regular.ttf',50)
+head_font=pygame.font.Font('font\Playpen_Sans/PlaypenSans-VariableFont_wght.ttf',70)
 
 #Создание иконки для приложения
 pygame.display.set_icon(icon)
@@ -81,12 +88,24 @@ color=get_color()
 next_figure=copy.deepcopy(figures[random.randint(0,6)])
 next_color=get_color()
 
+#Созданеи заготовок для текста
+HEAD_text=head_font.render('Tetris from KHT',True,'gold')
+SCORE_text=score_font.render('SCORE',True,'orange')
+CUR_SCORE_text=score_font.render('0',True,'orange')
 
 while True:
     #Задний фон
-    back_screen.fill(pygame.Color('black'))
-    back_screen.blit(screen,(20,20))
-    back_screen.blit(HSE,(800,0))
+    back_screen.blit(background,(0,0))
+    #Заголовок
+    back_screen.blit(HEAD_text,(RESOLUTION[0]//5,0))
+    #Score
+    back_screen.blit(SCORE_text,(RESOLUTION[0]//2+W*SQUARE//1.6,RESOLUTION[1]//1.8))
+    #Cur score
+    back_screen.blit(CUR_SCORE_text, (RESOLUTION[0] // 2 + W * SQUARE // 1.4, RESOLUTION[1] // 1.5))
+    #Основной экран игры
+    back_screen.blit(screen,( RESOLUTION[0]//2-W*SQUARE//2 , 0.15*H*SQUARE))
+    #Иконка HSE
+    back_screen.blit(HSE,(RESOLUTION[0]-100,0))
     #Цвет игрового поля
     screen.fill(pygame.Color('black'))
 
@@ -110,12 +129,12 @@ while True:
 
 
     #Отрисовка сетки поля
-    [pygame.draw.rect(screen, ("white"), i_rect, 1) for i_rect in grid]
+    [pygame.draw.rect(screen, ("lime"), i_rect, 1) for i_rect in grid]
 
     #Отрисовка следующей фигуры
     for i in range(4):
-        figure_rect.x=450+SQUARE*next_figure[i].x
-        figure_rect.y=200+SQUARE*next_figure[i].y
+        figure_rect.x=RESOLUTION[0]//2+W*SQUARE//4+SQUARE*next_figure[i].x
+        figure_rect.y=RESOLUTION[1]//3+SQUARE*next_figure[i].y
         pygame.draw.rect(back_screen,next_color,figure_rect)
 
     #Сдвиг фигуры вниз на 1 единицу при превышении лимита анимации
@@ -167,7 +186,12 @@ while True:
     line = H - 1
     for i in range(H - 1, -1, -1):
         flag = True
-        if all(field[i][j]!=0 for j in range (W)): flag = False
+        if all(field[i][j]!=0 for j in range (W)):
+            flag = False
+            score+=plus_score
+            plus_score+=delta_for_up_score
+            CUR_SCORE_text=score_font.render(str(score),True,'orange')
+            animation_speed+=plus_animation_speed
         field[line] = copy.deepcopy(field[i])
         if flag: line -= 1
 
